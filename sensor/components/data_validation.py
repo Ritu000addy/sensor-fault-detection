@@ -2,7 +2,7 @@ import os
 import sys
 from sensor.entity.config_entity import DataValidationConfig
 from sensor.entity.artifact_entity import DataValidationArtifact, DataIngestionArtifact
-from constant.training_pipeline import SCHEMA_FILE_PATH
+from sensor.constant.training_pipeline import SCHEMA_FILE_PATH
 from sensor.exception import SensorException
 from sensor.logger import logging
 from sensor.utils.main_utils import read_yaml_file, write_yaml_file
@@ -128,6 +128,8 @@ class DataValidation:
                 drift_report_file_path = self.data_validation_config.drift_report_file_path,
             )
             logging.info(f"Data validation artifact: {data_validation_artifact}")
+
+            return data_validation_artifact
 
         except Exception as e:
             raise SensorException(e, sys)

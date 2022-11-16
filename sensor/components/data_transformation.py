@@ -68,5 +68,31 @@ class DataTransformation:
             input_feature_train_final, target_feature_train_final = smt.fit_resample(
                 transformed_input_train_feature, target_feature_train_df)
 
+            input_feature_test_final, target_feature_test_final = smt.fit_resample(
+                transformed_input_test_feature, target_feature_test_df)
+
+            #concatenate
+            train_arr = np.c_[
+                input_feature_train_final,
+                np.array(target_feature_train_final)]
+
+            test_arr = np.c_[
+                input_feature_test_final,
+                np.array(target_feature_test_final)]
+
+            #save numpy array data
+            save_numpy_array_data(self.data_transformation_config.transformed_train_file_path, array= train_arr,)
+            save_numpy_array_data(self.data_transformation_config.transformed_test_file_path, array= test_arr,)
+            save_object(self.data_transformation_config.transformed_object_file_path, preprocessor_object,)
+            
+            #preparing artifact
+            data_transformation_artifact = DataTransformationArtifact(
+                transformed_object_file_path= self.data_transformation_config.transformed_object_file_path,
+                transformed_train_file_path= self.data_transformation_config.transformed_train_file_path,
+                transformed_test_file_path= self.data_transformation_config.transformed_test_file_path,
+            )
+            logging.info(f"Data transformation artifact: {data_transformation_artifact}")
+            return data_transformation_artifact
+
         except Exception as e:
             raise SensorException(e, sys) from e
