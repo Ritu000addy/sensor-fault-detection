@@ -24,7 +24,7 @@ class DataValidation:
 
     def validate_number_of_columns(self, dataframe:pd.DataFrame)->bool:
         try:
-            number_of_columns = len(self._schema_config['columns'])
+            number_of_columns = len(self._schema_config["columns"])
             logging.info(f"Required_number_of_columns: {number_of_columns}")
             logging.info(f"Dataframe has columns: {len(dataframe.columns)}")
             if len(dataframe.columns)==number_of_columns:
@@ -36,7 +36,7 @@ class DataValidation:
     
     def is_numerical_column_exist(self, dataframe:pd.DataFrame)->bool:
         try:
-            numerical_columns = self._schema_config['numerical_columns']
+            numerical_columns = self._schema_config["numerical_columns"]
             dataframe_columns = dataframe.columns
 
             numerical_column_present = True
@@ -55,7 +55,7 @@ class DataValidation:
     @staticmethod
     def read_data(file_path)->pd.DataFrame:
         try:
-            pd.read_csv(file_path)
+            return pd.read_csv(file_path)
         except Exception as e:
             raise SensorException(e, sys)
 
@@ -90,6 +90,7 @@ class DataValidation:
     
     def initiate_data_validation(self)->DataValidationArtifact:
         try:
+            error_message= ""
             train_file_path = self.data_ingestion_artifact.trained_file_path
             test_file_path = self.data_ingestion_artifact.test_file_path
 
@@ -111,9 +112,9 @@ class DataValidation:
                 error_message = f"{error_message}Train dataframe does not contain numerical columns.\n"
             status = self.is_numerical_column_exist(dataframe=test_dataframe)
             if not status:
-                error_message = f"{error_message}Test dataframe does not contain numerical columns."
+                error_message = f"{error_message}Test dataframe does not contain numerical columns.\n"
 
-            if len(error_message) >0:
+            if len(error_message)>0:
                 raise Exception(error_message)
 
             #lets check data drift
@@ -121,8 +122,8 @@ class DataValidation:
 
             data_validation_artifact = DataValidationArtifact(
                 validation_status = status,
-                valid_train_file_path = self.data_ingestion_artifact.train_.trained_file_path,
-                valid_test_file_path = self.data_ingestion_artifact.test_.test_file_path,
+                valid_train_file_path = self.data_ingestion_artifact.trained_file_path,
+                valid_test_file_path = self.data_ingestion_artifact.test_file_path,
                 invalid_train_file_path = None,#self.data_validation_config.invalid_train_file_path,
                 invalid_test_file_path = None,#self.data_validation_config.invalid_test_file_path,
                 drift_report_file_path = self.data_validation_config.drift_report_file_path,

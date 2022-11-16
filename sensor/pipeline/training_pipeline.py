@@ -5,8 +5,9 @@ import sys, os
 from sensor.logger import logging
 from sensor.components.data_ingestion import DataIngestion
 from sensor.components.data_validation import DataValidation
-from sensor.components.data_validation import DataTransformation
+from sensor.components.data_transformation import DataTransformation
 class TrainPipeline:
+    is_pipeline_running = False
     def __init__(self):
         self.training_pipeline_config = TrainingPipelineConfig()
         #self.training_pipeline_config = training_pipeline_config
@@ -64,8 +65,10 @@ class TrainPipeline:
 
     def run_pipeline(self):
         try:
+            TrainPipeline.is_pipeline_running=True
             data_ingestion_artifact:DataIngestionArtifact = self.start_data_ingestion()
             data_validation_artifact = self.start_data_validation(data_ingestion_artifact=data_ingestion_artifact)
             data_transformation_artifact = self.start_data_transformation(data_validation_artifact=data_validation_artifact)
         except Exception as e:
+            TrainPipeline.is_pipeline_running=False
             raise SensorException(e, sys)
