@@ -1,5 +1,6 @@
-import sys
+import sys, os
 from typing import Optional
+import json
 
 import numpy as np
 import pandas as pd
@@ -13,6 +14,20 @@ class SensorData:
     def __init__(self):
         try:
             self.mongo_client = MongoDBClient(database_name= DATABASE_NAME)
+        except Exception as e:
+            raise SensorException(e, sys)
+
+    def save_csv_file(self, file_path, collection_name: str, database_name: Optional[str] = None):
+        try:
+            data_frame = pd.read_csv(file_path)
+            data_frame.reset_index(drop= True, inplace= True)
+            records = list(json.loads(data_frame.T.to_json()).values())
+            if database_name is None:
+                collection = self.mongo_client.database[collection_name]
+            else:
+                collection = self.mongo_client.database[database_name][collection_name]
+            collection.insert_many(records)
+            return len(records)
         except Exception as e:
             raise SensorException(e, sys)
 
