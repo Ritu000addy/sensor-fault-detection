@@ -7,7 +7,7 @@ import os,sys
 from xgboost import XGBClassifier
 from sensor.ml.metric.classification_metric import get_classification_score
 from sensor.ml.model.estimator import SensorModel
-from utils.main_utils import save_object, load_object
+from sensor.utils.main_utils import save_object, load_object
 
 class ModelTrainer:
     def __init__(self, model_trainer_config: ModelTrainerConfig,
@@ -58,7 +58,7 @@ class ModelTrainer:
             if diff > self.model_trainer_config.overfitting_underfitting_threhold:             #5%
                 raise Exception("Not a good model, try to do more experimentation")      #not accept the model
 
-            preprocessor = load_object(file_path= self.data_transformation_artifacts.transformed_object_file_path)
+            preprocessor = load_object(file_path= self.data_transformation_artifact.transformed_object_file_path)
 
             model_dir_path = os.path.dirname(self.model_trainer_config.trained_model_file_path)
             os.makedirs(model_dir_path)

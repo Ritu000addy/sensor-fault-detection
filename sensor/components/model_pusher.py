@@ -1,15 +1,14 @@
 from sensor.exception import SensorException
 from sensor.logger import logging
-from sensor.entity.artifact_entity import DataValidationArtifact, ModelTrainerArtifact, ModelEvaulationArtifact, ModelPusherArtifact #output
+from sensor.entity.artifact_entity import DataValidationArtifact, ModelTrainerArtifact, ModelEvaluationArtifact, ModelPusherArtifact #output
 from sensor.entity.config_entity import ModelPusherConfig
 import os,sys
 from sensor.ml.metric.classification_metric import get_classification_score
-from sensor.ml.model.estimator import SensorModel, ModelResolver
-from utils.main_utils import save_object, load_object, write_yaml_file
+from sensor.utils.main_utils import save_object, load_object, write_yaml_file
 import shutil
 
 class ModelPusher:
-    def __init__(self, model_eval_artifact:ModelEvaulationArtifact,
+    def __init__(self, model_eval_artifact:ModelEvaluationArtifact,
                         model_pusher_config:ModelPusherConfig):
         try:
             self.model_pusher_config = model_pusher_config
@@ -19,7 +18,7 @@ class ModelPusher:
 
     def initiate_model_pusher(self,)-> ModelPusherArtifact:
         try:
-            trained_model_path = self.model_eval_artifact.train_model_file_path
+            trained_model_path = self.model_eval_artifact.trained_model_path
 
             #creating model pusher dir
             model_file_path = self.model_pusher_config.model_file_path
