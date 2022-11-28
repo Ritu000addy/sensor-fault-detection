@@ -105,6 +105,6 @@ class ModelPusherConfig:
 
         timestamp = round(datetime.now().timestamp())#datetime.now().strftime("%Y%m%d_%H%M%S")
         self.saved_model_path = os.path.join(
-            training_pipeline_config.SAVED_MODEL_DIR,
+            training_pipeline.SAVED_MODEL_DIR,
             f"{timestamp}",
             training_pipeline.MODEL_FILE_NAME)

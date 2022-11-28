@@ -1,7 +1,7 @@
 from sensor.exception import SensorException
 from sensor.logger import logging
-from sensor.entity.artifact_entity import DataValidationArtifact, ModelTrainerArtifact, ModelEvaluationArtifact, ModelPusherArtifact #output
-from sensor.entity.config_entity import ModelPusherConfig
+from sensor.entity.artifact_entity import ModelTrainerArtifact, ModelEvaluationArtifact, ModelPusherArtifact #output
+from sensor.entity.config_entity import ModelPusherConfig, ModelEvaluationConfig
 import os,sys
 from sensor.ml.metric.classification_metric import get_classification_score
 from sensor.utils.main_utils import save_object, load_object, write_yaml_file
@@ -16,7 +16,7 @@ class ModelPusher:
         except Exception as e:
             raise SensorException(e, sys)
 
-    def initiate_model_pusher(self,)-> ModelPusherArtifact:
+    def initiate_model_pusher(self,)->ModelPusherArtifact:
         try:
             trained_model_path = self.model_eval_artifact.trained_model_path
 

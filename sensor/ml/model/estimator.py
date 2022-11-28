@@ -1,4 +1,4 @@
-from sensor.constant.training_pipeline import SAVED_MODEL_DIR
+from sensor.constant.training_pipeline import SAVED_MODEL_DIR, MODEL_FILE_NAME
 import os
 
 class TargetValueMapping:
@@ -33,7 +33,7 @@ class SensorModel:
             raise e
 
 class ModelResolver:
-    def __init__(self, model_dir):
+    def __init__(self, model_dir=SAVED_MODEL_DIR):
         try:
             self.model_dir = model_dir
         except Exception as e:
@@ -43,12 +43,12 @@ class ModelResolver:
         try:
             timestamps = list(map(int,os.listdir(self.model_dir)))
             latest_timestamp = max(timestamps)
-            latest_model_path = os.path.join(self.model_dir, f" {latest_timestamp}", MODEL_FILE_NAME)
+            latest_model_path = os.path.join(self.model_dir, f"{latest_timestamp}", MODEL_FILE_NAME)
             return latest_model_path
         except Exception as e:
             raise e
 
-    def is_model_exists(self)-> str:
+    def is_model_exists(self)-> bool:
         try:
             if not os.path.exists(self.model_dir):
                 return False

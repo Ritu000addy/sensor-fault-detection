@@ -11,6 +11,7 @@ from sensor.components.data_transformation import DataTransformation
 from sensor.components.model_trainer import ModelTrainer
 from sensor.components.model_evaluation import ModelEvaluation
 from sensor.components.model_pusher import ModelPusher
+from sensor.constant.training_pipeline import SAVED_MODEL_DIR
 class TrainPipeline:
     is_pipeline_running = False
     def __init__(self):
@@ -54,13 +55,13 @@ class TrainPipeline:
         try:
             model_trainer_config = ModelTrainerConfig(training_pipeline_config=self.training_pipeline_config)
             model_trainer = ModelTrainer(model_trainer_config, data_transformation_artifact)
-            model_artifact = model_trainer.initiate_model_trainer()
-            return model_artifact
+            model_trainer_artifact = model_trainer.initiate_model_trainer()
+            return model_trainer_artifact
         except Exception as e:
             raise SensorException(e, sys)
 
-    def start_model_evaluation(self, data_validation_artifact: DataValidationArtifact,
-                        model_trainer_artifact: ModelTrainerArtifact,):
+    def start_model_evaluation(self, data_validation_artifact:DataValidationArtifact,
+                        model_trainer_artifact:ModelTrainerArtifact,):
         try:
             model_eval_config = ModelEvaluationConfig(self.training_pipeline_config)
             model_eval = ModelEvaluation(model_eval_config, data_validation_artifact, model_trainer_artifact)
@@ -103,6 +104,7 @@ class TrainPipeline:
             model_eval_artifact = self.start_model_evaluation(data_validation_artifact, model_trainer_artifact)
             if not model_eval_artifact.is_model_accepted:
                 raise Exception("Trained model is not better than the best model")
+
             model_pusher_artifact = self.start_model_pusher(model_eval_artifact)
 
             TrainPipeline.is_pipeline_running=False
