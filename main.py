@@ -2,18 +2,20 @@ from sensor.configuration.mongo_db_connection import MongoDBClient
 from sensor.exception import SensorException
 import os, sys
 from sensor.logger import logging
+from sensor.pipeline import training_pipeline
 from sensor.pipeline.training_pipeline import TrainPipeline
 from sensor.utils.main_utils import read_yaml_file
 from sensor.constant.training_pipeline import SAVED_MODEL_DIR
 from sensor.ml.model.estimator import ModelResolver, TargetValueMapping
 from sensor.utils.main_utils import load_object
 
-from fastapi import FastAPI
+from fastapi import FastAPI, File, UploadFile, Request
 from sensor.constant.application import APP_HOST, APP_PORT
 from starlette.responses import RedirectResponse
 from uvicorn import run as app_run
 from fastapi.responses import Response
 from fastapi.middleware.cors import CORSMiddleware
+import pandas as pd
 
 #from sensor.entity.config_entity import TrainingPipelineConfig, DataIngestionConfig
 #def test_exception():
@@ -36,11 +38,13 @@ from fastapi.middleware.cors import CORSMiddleware
 #    data_ingestion_config = DataIngestionConfig(training_pipeline_config= training_pipeline_config)
 #    print(data_ingestion_config.__dict__)
 
-#def set_env_variable(env_file_path):
-#    if os.getenv('MONGO_DB_URL', None) is None:
-#    env_config = read_yaml_file(env_file_path)
-#    os.environ['MONGO_DB_URL'] = env_config['MONGO_DB_URL']
-"""
+env_file_path = os.path.join(os.getcwd(), "env.yaml")
+
+def set_env_variable(env_file_path):
+    if os.getenv('MONGO_DB_URL', None) is None:
+        env_config = read_yaml_file(env_file_path)
+        os.environ['MONGO_DB_URL'] = env_config['MONGO_DB_URL']
+
 app = FastAPI()
 origins = ["*"]
 
@@ -68,12 +72,13 @@ async def train_route():
     except Exception as e:
         return Response(f"Error Occurred! {e}")
 
-#@app.get("/predict")
+@app.get("/predict")
 async def predict_route():
+    #request:Request,file:UploadFile=File(...)):
     try:
         #get data from user csv file
         # convert csv file to dataframe
-        df = None
+        df = None #pd.read_csv(file.file)
         #train df and upload df
         #calculate datadrift
         # if significant, trigger an email to DS team that data drift is detected
@@ -87,22 +92,26 @@ async def predict_route():
         y_pred = model.predict(df)
         df["predicted_column"] = y_pred
         df["predicted_column"].replace(TargetValueMapping().reverse_mapping(), inplace= True)
-
+        return df.to_html()
         #decide how to return file to user
 
     except Exception as e:
         raise Response(f"Error Occurred! {e}")
-"""
-#def main():
-if __name__ == '__main__':
+
+def main():
+#if __name__ == '__main__':
     try:
-#        env_file_path = "D:\project\sfd\sensor-fault-detection\env.yaml"
-#        set_env_variable(env_file_path)
+        #env_file_path = "D:\project\sfd\sensor-fault-detection\env.yaml"
+        set_env_variable(env_file_path)
         training_pipeline = TrainPipeline()
         training_pipeline.run_pipeline()
     except Exception as e:
         print(e)
         logging.exception(e)
 
-#if __name__ == '__main__':
-#    app_run(app, host= APP_HOST, port= APP_PORT)
+if __name__ == '__main__':
+    #main()
+    #set_env_variable(env_file_path)
+    
+    app_run(app, host= APP_HOST, port= APP_PORT)
+    #mongodb_client = MongoDBClient()
