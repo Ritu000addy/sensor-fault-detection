@@ -35,8 +35,8 @@ class DataTransformation:
             robulst_scaler = RobustScaler()
             simple_imputer = SimpleImputer(strategy="constant", fill_value=0)
             preprocessor = Pipeline(
-                steps=[("imputer", simple_imputer),
-                ("RobustScaler", robulst_scaler)]
+                steps=[("imputer", simple_imputer), #replace missing values with zero
+                ("RobustScaler", robulst_scaler)]   #keep every feature in same range and handle outliers
             )
             return preprocessor
             
