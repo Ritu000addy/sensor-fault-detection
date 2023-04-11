@@ -53,7 +53,7 @@ app.add_middleware(
     allow_origins = origins,
     allow_credentials = True,
     allow_methods = ["*"],
-    allow_headers = ["*"]
+    allow_headers = ["*"],
 )
 
 @app.get("/", tags = ["authentication"])
@@ -73,12 +73,11 @@ async def train_route():
         return Response(f"Error Occurred! {e}")
 
 @app.get("/predict")
-async def predict_route():
-    #request:Request,file:UploadFile=File(...)):
+async def predict_route(request:Request,file:UploadFile=File(...)):
     try:
         #get data from user csv file
         # convert csv file to dataframe
-        df = None #pd.read_csv(file.file)
+        df = pd.read_csv(file.file)
         #train df and upload df
         #calculate datadrift
         # if significant, trigger an email to DS team that data drift is detected
@@ -92,6 +91,7 @@ async def predict_route():
         y_pred = model.predict(df)
         df["predicted_column"] = y_pred
         df["predicted_column"].replace(TargetValueMapping().reverse_mapping(), inplace= True)
+        
         return df.to_html()
         #decide how to return file to user
 
