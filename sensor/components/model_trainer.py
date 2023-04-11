@@ -24,7 +24,7 @@ class ModelTrainer:
             xgb_clf.fit(x_train, y_train)
             return xgb_clf   
         except Exception as e:
-            raise SensorException(e, sys)
+            raise e
 
     def initiate_model_trainer(self)-> ModelTrainerArtifact:
         try:
