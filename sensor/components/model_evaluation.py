@@ -51,6 +51,7 @@ class ModelEvaluation:
                     best_model_metric_artifact= None)
 
                 logging.info(f"Model evaluation artifact: {model_evaluation_artifact}")
+                write_yaml_file(self.model_eval_config.report_file_path, model_evaluation_artifact.__dict__)
                 return model_evaluation_artifact
 
             latest_model_path = model_resolver.get_best_model_path()
